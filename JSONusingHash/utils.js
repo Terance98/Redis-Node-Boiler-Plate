@@ -12,34 +12,33 @@ const redis = Redis.createClient({
 
 const jsonCache = new JSONCache(redis, { prefix: "cache:" });
 
-const setJson = async ({ json_key_name, objectData, expire = null }) => {
+const setJson = async ({ objectName, objectData, expire = null }) => {
   try {
     if (expire !== null && expire !== undefined) {
-      await jsonCache.set(json_key_name, objectData, { expire });
+      await jsonCache.set(objectName, objectData, { expire });
     } else {
-      await jsonCache.set(json_key_name, objectData);
+      await jsonCache.set(objectName, objectData);
     }
     return true;
   } catch (err) {
     console.log(err);
-    return null;
   }
 };
 
 // keys should be an array of strings of the keys that are required ['name', 'age', 'address.pin']
-const getJson = async ({ json_key_name, keys = [] }) => {
-  let jsonData = await jsonCache.get(json_key_name, ...keys);
+const getJson = async ({ objectName, keys = [] }) => {
+  let objectData = await jsonCache.get(objectName, ...keys);
 
-  if (jsonData !== null || jsonData !== undefined) {
-    return jsonData;
+  if (objectData !== null || objectData !== undefined) {
+    return objectData;
   } else {
     return null;
   }
 };
 
-const deleteJson = async (key_name) => {
+const deleteJson = async (objectName) => {
   try {
-    await jsonCache.del(key_name);
+    await jsonCache.del(objectName);
     return true;
   } catch (err) {
     console.log(err);
